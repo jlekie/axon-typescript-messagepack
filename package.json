@@ -1,0 +1,24 @@
+{
+  "name": "@jlekie/axon-messagepack",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Joe Lekie",
+  "license": "MIT",
+  "scripts": {
+    "build": "ts-node scripts/build.ts",
+    "start": "node dist/bin/run.js start"
+  },
+  "devDependencies": {
+    "@jlekie/build-utils": "^0.0.3",
+    "@types/msgpack-lite": "^0.1.6",
+    "@types/node": "^10.12.5",
+    "@types/stream-buffers": "^3.0.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  },
+  "dependencies": {
+    "msgpack-lite": "^0.1.26",
+    "stream-buffers": "^3.0.2"
+  }
+}
