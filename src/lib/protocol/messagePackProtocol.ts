@@ -16,7 +16,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         this.decoderChunkSize = decoderChunkSize;
     }
 
-    public async writeData(transport: ITransport, metadata: Map<string, Buffer>, handler: (protocolWriter: IProtocolWriter) => void): Promise<void> {
+    public async writeData(transport: ITransport, metadata: Record<string, Buffer>, handler: (protocolWriter: IProtocolWriter) => void): Promise<void> {
         const buffer = new WritableStreamBuffer();
         const encoderStream = MessagePack.createEncodeStream();
 
@@ -33,7 +33,25 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
 
         await transport.send(data, metadata);
     }
-    public async readData<TResult = void>(transport: ITransport, handler: (protocolReader: IProtocolReader, metadata: Map<string, Buffer>) => TResult): Promise<TResult> {
+    public async writeTaggedData(transport: ITransport, messageId: string, metadata: Record<string, Buffer>, handler: (protocolWriter: IProtocolWriter) => void): Promise<void> {
+        const buffer = new WritableStreamBuffer();
+        const encoderStream = MessagePack.createEncodeStream();
+
+        encoderStream.pipe(buffer);
+
+        const writer = new MessagePackProtocolWriter(transport, this, encoderStream);
+        handler(writer);
+
+        encoderStream.end();
+
+        const data = buffer.getContents();
+        if (!data)
+            throw new Error('Buffer empty');
+
+        await transport.sendTagged(messageId, data, metadata);
+    }
+
+    public async readData<TResult = void>(transport: ITransport, handler: (protocolReader: IProtocolReader, metadata: Record<string, Buffer>) => TResult): Promise<TResult> {
         const { data, metadata } = await transport.receive();
 
         const buffer = new ReadableStreamBuffer({ chunkSize: data.length || this.decoderChunkSize });
@@ -59,7 +77,61 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
 
         return result;
     }
-    public async writeAndReadData<TResult = void>(transport: ITransport, metadata: Map<string, Buffer>, handler: (protocolWriter: IProtocolWriter) => void): Promise<(readHandler: ((protocolReader: IProtocolReader, metadata: Map<string, Buffer>) => TResult)) => Promise<TResult>> {
+    public async readTaggedData<TResult = void>(transport: ITransport, messageId: string, handler: (protocolReader: IProtocolReader, metadata: Record<string, Buffer>) => TResult): Promise<TResult> {
+        const { data, metadata } = await transport.receiveTagged(messageId);
+
+        const buffer = new ReadableStreamBuffer({ chunkSize: data.length || this.decoderChunkSize });
+        const decoderStream = MessagePack.createDecodeStream();
+
+        const result = await new Promise<TResult>((resolve, reject) => {
+            buffer.once('readable', async () => {
+                try {
+                    const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                    resolve(handler(reader, metadata));
+                }
+                catch (err) {
+                    reject(err);
+                }
+            });
+
+            buffer.put(data);
+            buffer.stop();
+
+            decoderStream.pause();
+            buffer.pipe(decoderStream);
+        });
+
+        return result;
+    }
+
+    public async readBufferedTaggedData<TResult = void>(transport: ITransport, handler: (protocolReader: IProtocolReader, messageId: string, metadata: Record<string, Buffer>) => TResult): Promise<TResult> {
+        const { tag, data, metadata } = await transport.receiveBufferedTagged();
+
+        const buffer = new ReadableStreamBuffer({ chunkSize: data.length || this.decoderChunkSize });
+        const decoderStream = MessagePack.createDecodeStream();
+
+        const result = await new Promise<TResult>((resolve, reject) => {
+            buffer.once('readable', async () => {
+                try {
+                    const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                    resolve(handler(reader, tag, metadata));
+                }
+                catch (err) {
+                    reject(err);
+                }
+            });
+
+            buffer.put(data);
+            buffer.stop();
+
+            decoderStream.pause();
+            buffer.pipe(decoderStream);
+        });
+
+        return result;
+    }
+
+    public async writeAndReadData<TResult = void>(transport: ITransport, metadata: Record<string, Buffer>, handler: (protocolWriter: IProtocolWriter) => void): Promise<(readHandler: ((protocolReader: IProtocolReader, metadata: Record<string, Buffer>) => TResult)) => Promise<TResult>> {
         const buffer = new WritableStreamBuffer();
         const encoderStream = MessagePack.createEncodeStream();
 

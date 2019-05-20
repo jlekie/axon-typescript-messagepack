@@ -9,7 +9,6 @@
     "watch": "tsc --watch"
   },
   "devDependencies": {
-    "@jlekie/build-utils": "^0.0.3",
     "@types/msgpack-lite": "^0.1.6",
     "@types/node": "^10.12.5",
     "@types/stream-buffers": "^3.0.2",
