@@ -28,6 +28,9 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         encoderStream.end();
 
         const data = buffer.getContents();
+        if (!data)
+            throw new Error('Buffer empty');
+
         await transport.send(data, metadata);
     }
     public async readData<TResult = void>(transport: ITransport, handler: (protocolReader: IProtocolReader, metadata: Map<string, Buffer>) => TResult): Promise<TResult> {
@@ -68,6 +71,9 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         encoderStream.end();
 
         const data = buffer.getContents();
+        if (!data)
+            throw new Error('Buffer empty');
+
         const receiveHandler = await transport.sendAndReceive(data, metadata);
 
         return async (readHandler) => {
