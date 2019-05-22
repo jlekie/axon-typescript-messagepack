@@ -60,6 +60,8 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         const result = await new Promise<TResult>((resolve, reject) => {
             buffer.once('readable', async () => {
                 try {
+                    buffer.read();
+
                     const reader = new MessagePackProtocolReader(transport, this, decoderStream);
                     resolve(handler(reader, metadata));
                 }
@@ -86,6 +88,8 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         const result = await new Promise<TResult>((resolve, reject) => {
             buffer.once('readable', async () => {
                 try {
+                    buffer.read();
+
                     const reader = new MessagePackProtocolReader(transport, this, decoderStream);
                     resolve(handler(reader, metadata));
                 }
@@ -113,6 +117,8 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
         const result = await new Promise<TResult>((resolve, reject) => {
             buffer.once('readable', async () => {
                 try {
+                    buffer.read();
+
                     const reader = new MessagePackProtocolReader(transport, this, decoderStream);
                     resolve(handler(reader, tag, metadata));
                 }
@@ -157,6 +163,8 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
             const result = await new Promise<TResult>((resolve, reject) => {
                 buffer.once('readable', async () => {
                     try {
+                        buffer.read();
+
                         const reader = new MessagePackProtocolReader(transport, this, decoderStream);
                         resolve(readHandler(reader, metadata));
                     }
