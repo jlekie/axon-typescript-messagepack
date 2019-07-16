@@ -2,6 +2,7 @@ import { AProtocol, AProtocolReader, AProtocolWriter, ITransport, IProtocol, IPr
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers';
 import { DecodeStream, EncodeStream } from 'msgpack-lite';
 import * as MessagePack from 'msgpack-lite';
+// import * as MsgPack from 'msgpack';
 
 export interface IMessagePackProtocol extends IProtocol {
     readonly decoderChunkSize: number;
