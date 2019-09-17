@@ -25,7 +25,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/msgpack@^0.0.30":
+"@types/msgpack@0.0.30":
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/msgpack/-/msgpack-0.0.30.tgz#9c3cc2fad1ccd6675849879d1390a9596fed2ca8"
   integrity sha512-ehT/a2KQeQhMwMxvzvoZ/MFjwmOa9km5mL6G8XQPwF+z6DG1mJYhOvZACys9+Rd0zh0TxIHs1K3lKSImJGl0dg==
@@ -227,7 +227,7 @@ msgpack-lite@0.1.26:
     int64-buffer "^0.1.9"
     isarray "^1.0.0"
 
-msgpack@^1.0.2:
+msgpack@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/msgpack/-/msgpack-1.0.2.tgz#923e2c5cffa65c8418e9b228d1124793969c429c"
   integrity sha1-kj4sXP+mXIQY6bIo0RJHk5acQpw=
