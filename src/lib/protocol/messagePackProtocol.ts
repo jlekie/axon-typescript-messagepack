@@ -213,8 +213,8 @@ export class MessagePackProtocolReader extends AProtocolReader implements IMessa
     public readIntegerValue(): number {
         return this.read<number>();
     }
-    public readLongValue(): number {
-        return this.read<number>();
+    public readLongValue(): BigInt {
+        return this.read<BigInt>();
     }
     public readFloatValue(): number {
         return this.read<number>();
@@ -263,7 +263,7 @@ export class MessagePackProtocolWriter extends AProtocolWriter implements IMessa
     public writeIntegerValue(value: number) {
         this.write(value);
     }
-    public writeLongValue(value: number) {
+    public writeLongValue(value: BigInt) {
         this.write(value);
     }
     public writeFloatValue(value: number) {
