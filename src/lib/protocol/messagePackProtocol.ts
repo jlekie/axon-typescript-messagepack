@@ -23,7 +23,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
 
         encoderStream.pipe(buffer);
 
-        const writer = new MessagePackProtocolWriter(transport, this, encoderStream);
+        const writer = new MessagePackProtocolWriter(encoderStream);
         handler(writer);
 
         encoderStream.end();
@@ -40,7 +40,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
 
         encoderStream.pipe(buffer);
 
-        const writer = new MessagePackProtocolWriter(transport, this, encoderStream);
+        const writer = new MessagePackProtocolWriter(encoderStream);
         handler(writer);
 
         encoderStream.end();
@@ -63,7 +63,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
                 try {
                     buffer.read();
 
-                    const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                    const reader = new MessagePackProtocolReader(decoderStream);
                     resolve(handler(reader, transportMessage.metadata));
                 }
                 catch (err) {
@@ -91,7 +91,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
                 try {
                     buffer.read();
 
-                    const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                    const reader = new MessagePackProtocolReader(decoderStream);
                     resolve(handler(reader, transportMessage.metadata));
                 }
                 catch (err) {
@@ -120,7 +120,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
                 try {
                     buffer.read();
 
-                    const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                    const reader = new MessagePackProtocolReader(decoderStream);
                     resolve(handler(reader, taggedTransportMessage.id, taggedTransportMessage.message.metadata));
                 }
                 catch (err) {
@@ -144,7 +144,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
 
         encoderStream.pipe(buffer);
 
-        const writer = new MessagePackProtocolWriter(transport, this, encoderStream);
+        const writer = new MessagePackProtocolWriter(encoderStream);
         handler(writer);
 
         encoderStream.end();
@@ -166,7 +166,7 @@ export class MessagePackProtocol extends AProtocol implements IMessagePackProtoc
                     try {
                         buffer.read();
 
-                        const reader = new MessagePackProtocolReader(transport, this, decoderStream);
+                        const reader = new MessagePackProtocolReader(decoderStream);
                         resolve(readHandler(reader, metadata));
                     }
                     catch (err) {
@@ -192,8 +192,8 @@ export interface IMessagePackProtocolReader extends IProtocolReader {
 export class MessagePackProtocolReader extends AProtocolReader implements IMessagePackProtocolReader {
     public readonly decoderStream: DecodeStream;
 
-    public constructor(transport: ITransport, protocol: IProtocol, decoderStream: DecodeStream) {
-        super(transport, protocol);
+    public constructor(decoderStream: DecodeStream) {
+        super();
 
         this.decoderStream = decoderStream;
     }
@@ -242,8 +242,8 @@ export interface IMessagePackProtocolWriter extends IProtocolWriter {
 export class MessagePackProtocolWriter extends AProtocolWriter implements IMessagePackProtocolWriter {
     public readonly encoderStream: EncodeStream;
 
-    public constructor(transport: ITransport, protocol: IProtocol, encoderStream: EncodeStream) {
-        super(transport, protocol);
+    public constructor(encoderStream: EncodeStream) {
+        super();
 
         this.encoderStream = encoderStream;
     }
